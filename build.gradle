@@ -1,0 +1,106 @@
+plugins {
+    id "java"
+    id "edu.wpi.first.GradleRIO" version "2022.4.1"
+    id 'org.springframework.boot' version '2.6.5'
+}
+
+List<String> wpilibDesktopJni(String platform) {
+    return ["edu.wpi.first.thirdparty.frc2020.opencv:opencv-jni:${wpi.opencvVersion}:${platform}@jar".toString(),
+            "edu.wpi.first.hal:hal-jni:${wpi.wpilibVersion}:${platform}@jar".toString(),
+            "edu.wpi.first.wpiutil:wpiutil-jni:${wpi.wpilibVersion}:${platform}@jar".toString(),
+            "edu.wpi.first.ntcore:ntcore-jni:${wpi.wpilibVersion}:${platform}@jar".toString(),
+            "edu.wpi.first.cscore:cscore-jni:${wpi.wpilibVersion}:${platform}@jar".toString()]
+}
+
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+
+def ROBOT_MAIN_CLASS = "org.frc571.springbot.SpringbotApplication"
+
+// Define my targets (RoboRIO) and artifacts (deployable files)
+// This is added by GradleRIO's backing project DeployUtils.
+deploy {
+    targets {
+        roborio(getTargetTypeClass('RoboRIO')) {
+            // Team number is loaded either from the .wpilib/wpilib_preferences.json
+            // or from command line. If not found an exception will be thrown.
+            // You can use getTeamOrDefault(team) instead of getTeamNumber if you
+            // want to store a team number in this file.
+            team = project.frc.getTeamNumber()
+            debug = project.frc.getDebugOrDefault(false)
+
+            artifacts {
+                // First part is artifact name, 2nd is artifact type
+                // getTargetTypeClass is a shortcut to get the class type using a string
+
+                frcJava(getArtifactTypeClass('FRCJavaArtifact')) {
+                }
+
+                // Static files artifact
+                frcStaticFileDeploy(getArtifactTypeClass('FileTreeArtifact')) {
+                    files = project.fileTree('src/main/deploy')
+                    directory = '/home/lvuser/deploy'
+                }
+            }
+        }
+    }
+}
+
+def deployArtifact = deploy.targets.roborio.artifacts.frcJava
+
+// Set to true to use debug for JNI.
+wpi.java.debugJni = false
+
+// Set this to true to enable desktop support.
+def includeDesktopSupport = true
+
+// Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
+// Also defines JUnit 4.
+dependencies {
+    implementation wpi.java.deps.wpilib()
+    implementation wpi.java.vendor.java()
+
+    roborioDebug wpi.java.deps.wpilibJniDebug(wpi.platforms.roborio)
+    roborioDebug wpi.java.vendor.jniDebug(wpi.platforms.roborio)
+
+    roborioRelease wpi.java.deps.wpilibJniRelease(wpi.platforms.roborio)
+    roborioRelease wpi.java.vendor.jniRelease(wpi.platforms.roborio)
+
+    nativeDebug wpi.java.deps.wpilibJniDebug(wpi.platforms.desktop)
+    nativeDebug wpi.java.vendor.jniDebug(wpi.platforms.desktop)
+    simulationDebug wpi.sim.enableDebug()
+
+    nativeRelease wpi.java.deps.wpilibJniRelease(wpi.platforms.desktop)
+    nativeRelease wpi.java.vendor.jniRelease(wpi.platforms.desktop)
+    simulationRelease wpi.sim.enableRelease()
+
+    testImplementation 'junit:junit:4.13.1'
+
+    implementation 'org.springframework.boot:spring-boot-starter:2.6.5'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test:2.6.5'
+
+//    implementation 'commons-beanutils:commons-beanutils:1.9.4'
+    implementation 'ch.qos.logback:logback-classic:1.2.11'
+}
+
+// Simulation configuration (e.g. environment variables).
+wpi.sim.addGui().defaultEnabled = true
+wpi.sim.addDriverstation()
+
+// Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')
+// in order to make them all available at runtime. Also adding the manifest so WPILib
+// knows where to look for our Robot Class.
+bootJar {
+    archiveBaseName.set('spring-bot')
+    archiveClassifier.set('all')
+    archiveVersion.set('')
+    manifest {
+        attributes( "Main-Class": "org.springframework.boot.loader.JarLauncher", "Start-Class": ROBOT_MAIN_CLASS)
+    }
+}
+
+// Configure jar and deploy tasks
+deployArtifact.jarTask = bootJar
+wpi.java.configureExecutableTasks(bootJar)
+wpi.java.configureTestTasks(test)
