@@ -10,65 +10,7 @@
             http://www.springframework.org/schema/util
             http://www.springframework.org/schema/util/spring-util.xsd">
 <context:component-scan base-package="org.frc571.robot" />
-
-<bean id="robotContainer" class="org.frc571.springbot.RobotContainer">
-    <util:map id="commands" map-class="java.util.HashMap" key-type="java.lang.String" value-type="edu.wpi.first.wpilibj2.command.CommandBase"> 
-        <entry key="driveCommand" id="driveCommand"/>
-    </util:map>
-        <util:map id="subsystems" map-class="java.util.HashMap" key-type="java.lang.String" value-type="org.frc571.springbot.subsystems.Subsystem"> 
-        <entry key="drive" id="drive"/>
-    </util:map>
-</bean>
-<bean id="drive"
-      class="org.frc571.springbot.subsystems.Drive">
-<property name="leftLeader"
-          id="leftLeadDriveMotor" />
-<property name="rightLeader"
-          id="rightLeadDriveMotor" />
-<property name="leftFollower"
-          id="leftFollowerDriveMotor" />
-<property name="rightFollower"
-          id="rightFollowerDriveMotor" />
-<property name="pigeon2"
-          id="pigeon2" />
-<property name="defaultCommand"
-          value="org.frc571.springbot.commands.DriveCommand" />
-</bean>
-<bean id="leftLeadDriveMotor"
-      class="com.ctre.phoenix.motorcontrol.can.WPI_TalonFX">
-<constructor-arg index="0"
-                 value="1" />
-<constructor-arg index="1"
-                 value="rio" />
-</bean>
-<bean id="rightLeadDriveMotor"
-      class="com.ctre.phoenix.motorcontrol.can.WPI_TalonFX">
-<constructor-arg index="0"
-                 value="2" />
-<constructor-arg index="1"
-                 value="rio" />
-</bean>
-<bean id="leftFollowerDriveMotor"
-      class="com.ctre.phoenix.motorcontrol.can.WPI_TalonFX">
-<constructor-arg index="0"
-                 value="3" />
-<constructor-arg index="1"
-                 value="rio" />
-</bean>
-<bean id="rightFollowerDriveMotor"
-      class="com.ctre.phoenix.motorcontrol.can.WPI_TalonFX">
-<constructor-arg index="0"
-                 value="4" />
-<constructor-arg index="1"
-                 value="rio" />
-</bean>
-<bean id="pigeon2"
-      class="com.ctre.phoenix.sensors.WPI_Pigeon2">
-<constructor-arg index="0"
-                 value="5" />
-<constructor-arg index="1"
-                 value="rio" />
-</bean>
+<import resource="drive-subsystem.xml" />
 <bean id="driveStick"
       class="org.frc571.springbot.hardware.XboxController">
 <constructor-arg index="0"
