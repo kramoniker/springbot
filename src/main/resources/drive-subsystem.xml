@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/context
+            http://www.springframework.org/schema/context/spring-context.xsd
+            http://www.springframework.org/schema/util
+            http://www.springframework.org/schema/util/spring-util.xsd">
+<bean id="drive"
+      class="org.frc571.springbot.subsystems.Drive">
+<property name="leftLeader"
+          id="leftLeadDriveMotor" />
+<property name="rightLeader"
+          id="rightLeadDriveMotor" />
+<property name="leftFollower"
+          id="leftFollowerDriveMotor" />
+<property name="rightFollower"
+          id="rightFollowerDriveMotor" />
+<property name="pigeon2"
+          id="pigeon2" />
+<property name="defaultCommand"
+          value="org.frc571.springbot.commands.DriveCommand" />
+</bean>
+<bean id="leftLeadDriveMotor"
+      class="com.ctre.phoenix.motorcontrol.can.WPI_TalonFX">
+<constructor-arg index="0"
+                 value="1" />
+<constructor-arg index="1"
+                 value="rio" />
+</bean>
+<bean id="rightLeadDriveMotor"
+      class="com.ctre.phoenix.motorcontrol.can.WPI_TalonFX">
+<constructor-arg index="0"
+                 value="2" />
+<constructor-arg index="1"
+                 value="rio" />
+</bean>
+<bean id="leftFollowerDriveMotor"
+      class="com.ctre.phoenix.motorcontrol.can.WPI_TalonFX">
+<constructor-arg index="0"
+                 value="3" />
+<constructor-arg index="1"
+                 value="rio" />
+</bean>
+<bean id="rightFollowerDriveMotor"
+      class="com.ctre.phoenix.motorcontrol.can.WPI_TalonFX">
+<constructor-arg index="0"
+                 value="4" />
+<constructor-arg index="1"
+                 value="rio" />
+</bean>
+<bean id="pigeon2"
+      class="com.ctre.phoenix.sensors.WPI_Pigeon2">
+<constructor-arg index="0"
+                 value="5" />
+<constructor-arg index="1"
+                 value="rio" />
+</bean>
+</beans>
